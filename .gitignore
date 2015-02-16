@@ -1,5 +1,4 @@
 *bin
-/
 *.db
 *.ini
 *debug*
@@ -7,3 +6,4 @@
 *.classpath
 *.project
 *lib/
+*Test*
