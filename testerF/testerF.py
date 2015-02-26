@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from time import sleep
 
 def calculate_black(array): 
@@ -36,22 +37,15 @@ print "Start params:", str(half_size) + " " + str(queries)
 for i in range(queries):
     if ((i < 5) or ((i < 100) and (i % 10 == 0)) or ((i < 1000) and (i % 100 == 0)) or (i % 1000 == 0)):
         print "~~~", i, " queries have been already generated."
-    start = -half_size
-    leng = 2*half_size
-    color_number = 1
-    if ((i % 2) == 0):
-        color = 'B'
-        color_number = 0
-    else:
-        color = 'W'  
-        color_number = 1
-    #print str(color) + " " + str(start) + " " + str(leng) + "\n"
+    start = random.randint(-half_size, half_size - 1)
+    leng = random.randint(1, half_size - start)
+    color_number = random.randint(0,1)
+    color = 'B'
+    if color_number:
+        color = 'W'
     java_input.write(str(color) + " " + str(start) + " " + str(leng) + "\n")
-    #array[half_size + start : half_size + start + leng] = [color_number] * (leng)
-    #print "Updated:", array ,"\n"
-    #count, black_length = calculate_black(array)
-    count = 1 - (i%2)
-    black_length = (1-(i%2))*2*half_size
+    array[half_size + start:half_size + start+leng] = [color_number] * leng
+    count, black_length = calculate_black(array)
     #print "Note:", count, black_length
     if (i == queries - 1):
         python_output.write(str(count) + " " + str(black_length))

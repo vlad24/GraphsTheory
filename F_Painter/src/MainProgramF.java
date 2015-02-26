@@ -6,10 +6,9 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 
 
-
 public class MainProgramF{
 
-	
+
 	private static class TreeElement{
 		//
 		public int color;
@@ -30,7 +29,7 @@ public class MainProgramF{
 			rightControl = newRightControl;
 			setBlacks();
 		}
-		
+
 		public void setBlacks(){
 			if (color == WHITE){
 				lBlack = false;
@@ -44,18 +43,18 @@ public class MainProgramF{
 				blacksLength = rightControl - leftControl + 1;
 			}
 		}
-		
+
 		public void bufferize(int newColor){
 			buffered = true;
 			colorBuffer = newColor;
 			color = newColor;
 		}
-		
+
 		public void unbufferize() {
 			buffered = false;
 			colorBuffer = -1;	
 		}
-		
+
 		public boolean isFullyControlling(int leftBound, int rightBound){
 			return (leftControl == leftBound) && (rightControl == rightBound);
 		}
@@ -64,7 +63,7 @@ public class MainProgramF{
 
 	public static final int BLACK = 0;
 	public static final int WHITE = 2;
-	
+
 
 	private static class SegmentTreeLazy{
 		//
@@ -81,7 +80,8 @@ public class MainProgramF{
 			//leafLineStart = totalCapacity - leafLineLength;
 			treeElements[0] = new TreeElement(WHITE, 0, leafLineLength - 1);
 		}
-		
+
+		/*
 		private void printTree(){
 			System.out.println(">> ");
 			System.out.println(treeElements[0].color + "(" + treeElements[0].colorBuffer + ") " + "[" + treeElements[0].blacks + ", " + treeElements[0].blacksLength + "]");
@@ -97,13 +97,14 @@ public class MainProgramF{
 						System.out.print(" x ");
 					}
 				}
-					start += l;
-					l = l << 1;
-					System.out.println("\n");
+				start += l;
+				l = l << 1;
+				System.out.println("\n");
 			}
 			System.out.print("<< \n");
 		}
-		
+		*/
+
 
 		private boolean isLeaf(int vertexNumber){
 			return treeElements[vertexNumber].leftControl == treeElements[vertexNumber].rightControl;
@@ -112,15 +113,15 @@ public class MainProgramF{
 		private int colorSum(TreeElement leftSegment, TreeElement rightSegment){
 			return (leftSegment.color == rightSegment.color) ? leftSegment.color : 1;
 		}
-		
+
 		private int blacksSum(TreeElement left, TreeElement right){
 			return left.blacks + right.blacks - ((left.rBlack && right.lBlack) ? 1 : 0);
 		}
-		
+
 		private int blacksLengthSum(TreeElement left, TreeElement right){
 			return left.blacksLength + right.blacksLength;
 		}
-		
+
 		public void updateSegmentLazy(int leftBound, int rightBound, int newValue){
 			updateSegmentLazyRecursive(0, leftBound, rightBound, newValue);
 		}
@@ -161,7 +162,7 @@ public class MainProgramF{
 				return;
 			}
 		}
-				
+
 		private void pushBufferDeeper(int vertex){
 			TreeElement current = treeElements[vertex];
 			if (current.buffered){
@@ -189,38 +190,16 @@ public class MainProgramF{
 			result[1] = treeElements[0].blacksLength;
 			return result;
 		}
-		
-		public int[] calculateBlackSegments() {
-			int[] result = new int[3];
-			result[2] = Integer.MIN_VALUE;
-			return updateResultRecursively(0, result);
-		}
 
-		private int[] updateResultRecursively(int vertex, int[] result) {
-			TreeElement current = treeElements[vertex];
-			if (current == null){
-				return result;
-			}else if (current.color == BLACK){
-				if (current.leftControl != result[2] + 1){ // if it is not a continuing
-					result[0]++;
-				}
-				result[1] += current.rightControl - current.leftControl + 1;
-				result[2] = current.rightControl; // move the right border
-			}else if(!isLeaf(vertex) && current.color != WHITE){
-				updateResultRecursively(2*vertex + 1, result);
-				updateResultRecursively(2*vertex + 2, result);
-			}
-			return result;
-		}
 		
 	}
 
+	
 	private static String inputFileName = "painter.in";
 	private static String outputFileName = "painter.out";
-	
-	
 	//private static long startMoment = 0L;
-/*	
+
+	/*
 	private static void checkTime(boolean start){
 		if (start){
 			startMoment = System.currentTimeMillis();
@@ -228,18 +207,17 @@ public class MainProgramF{
 			System.out.println("\nSeconds spent: " + ((System.currentTimeMillis() - startMoment) / 1000.0));
 		}
 	}
-*/
-	
-	
+	*/
+
 	public static void main(String[] args) throws Exception{
-		int[] result = new int[3];
+		//checkTime(true);
 		File input = new File(inputFileName);
 		File output = new File(outputFileName);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(input)), 32768);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(output));
 		int queryAmount = Integer.parseInt(reader.readLine());
 		//System.out.println("Processing " + queryAmount + " queries");
-		int halfSize = 10;
+		int halfSize = 500000;
 		SegmentTreeLazy tree = new SegmentTreeLazy(2 * halfSize + 1);
 		for (int k = 0; k < queryAmount; k++){
 			String query = reader.readLine();
@@ -250,8 +228,8 @@ public class MainProgramF{
 			int rightBound = leftBound + Integer.parseInt(parameters[2]) - 1;
 			tree.updateSegmentLazy(leftBound, rightBound, color);
 			//tree.printTree();
-			result = tree.calculateBlackSegmentsFast();
-			System.out.println(result[0] + " " + result[1] + "\n");
+			int[] result = tree.calculateBlackSegmentsFast();
+			//System.out.println(result[0] + " " + result[1] + "\n");
 			if (k == queryAmount - 1)
 				writer.write(result[0] + " " + result[1]);
 			else
@@ -259,8 +237,10 @@ public class MainProgramF{
 		}
 		reader.close();
 		writer.close();
+		//checkTime(false);
 		System.out.println("\nFinished.");
 	}
+
 
 	
 }
