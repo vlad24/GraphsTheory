@@ -6,4 +6,6 @@
 *.classpath
 *.project
 *lib/
-*Test*
+*.settings
+*metadata*
+*.recommenders*
