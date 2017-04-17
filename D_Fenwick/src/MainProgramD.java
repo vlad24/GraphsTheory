@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 
 
-public class MainProgram {
+public class MainProgramD {
 	
 	private static class FenwickTree{
 		//
